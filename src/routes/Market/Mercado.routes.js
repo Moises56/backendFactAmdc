@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import Market from "../controller/Mercado.controller.js";
+import Market from "../../controller/Market/Mercado.controller.js";
 
 const router = Router();
 
@@ -132,14 +132,24 @@ router.delete("/deleteMarket/:id", Market.deleteMarket);
  *
  */
 
+// consulta para mostrar todos los locales con su mercado
+/**
+ * @swagger
+ * /marketsWithLocal:
+ *  get:
+ *     summary: Get all markets with localidades
+ *     tags: [Markets by localidad]
+ */
+router.get("/marketsWithLocal", Market.getAllLocalidadesAndMarkets);
+
 /**
  * @swagger
  * /marketsByLocalidad/{id}:
  *  get:
- *     summary: Get all markets by localidad_id
- *     tags: [Markets by localidad]
+ *      summary: Get a markets with all localidad
+ *      tags: [Markets by localidad]
  */
 
-router.get("/marketsByLocalidad/:id", Market.getAllMarketsByLocalidadId);
+router.get("/marketsByLocalidad/:id", Market.getAllLocalidadesByMarketId);
 
 export default router;

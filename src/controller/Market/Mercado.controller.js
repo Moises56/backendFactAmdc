@@ -1,6 +1,6 @@
 const Market = {};
 
-import { connect } from "../db.js";
+import { connect } from "../../db.js";
 
 //* localidades ==========>
 
@@ -26,7 +26,7 @@ Market.createLocalidades = async (req, res) => {
   const conn = await connect();
   try {
     const [result] = await conn.query(
-      "INSERT INTO localidades (propietario,DNI,numero_local,nombre_local,tipo_local,estado_local,latitud,longitud,telefono,direccion,monto) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO localidades (propietario,DNI,numero_local,nombre_local,tipo_local,estado_local,latitud,longitud,telefono,direccion,monto,mercado_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
         req.body.propietario,
         req.body.DNI,
@@ -39,6 +39,7 @@ Market.createLocalidades = async (req, res) => {
         req.body.telefono,
         req.body.direccion,
         req.body.monto,
+        req.body.mercado_id,
       ]
     );
     res.json({
@@ -56,7 +57,7 @@ Market.updateLocalidades = async (req, res) => {
   const conn = await connect();
   try {
     await conn.query(
-      "UPDATE localidades SET propietario = ?, DNI = ?, numero_local = ?, nombre_local = ?, tipo_local = ?, estado_local = ?, latitud = ?, longitud = ?, telefono = ?, direccion = ?, monto = ? WHERE id = ?",
+      "UPDATE localidades SET propietario = ?, DNI = ?, numero_local = ?, nombre_local = ?, tipo_local = ?, estado_local = ?, latitud = ?, longitud = ?, telefono = ?, direccion = ?, monto = ?, mercado_id = ? WHERE id = ?",
       [
         req.body.propietario,
         req.body.DNI,
@@ -69,6 +70,7 @@ Market.updateLocalidades = async (req, res) => {
         req.body.telefono,
         req.body.direccion,
         req.body.monto,
+        req.body.mercado_id,
         req.params.id,
       ]
     );
@@ -171,23 +173,61 @@ Market.deleteMarket = async (req, res) => {
   }
 };
 
-// get all markets by localidad_id
-Market.getAllMarketsByLocalidadId = async (req, res) => {
+// consulta para mostrar todos los locales de cada mercado
+Market.getAllLocalidadesAndMarkets = async (req, res) => {
   const conn = await connect();
   const [rows] = await conn.query(
-    "SELECT * FROM mercados WHERE localidad_id = ?",
-    [req.params.localidad_id]
+    `
+      SELECT M.nombre_mercado, 
+          L.propietario,
+          L.DNI,
+          L.nombre_local, 
+          L.tipo_local, 
+          L.estado_local, 
+          L.telefono, 
+          L.direccion,
+          L.monto
+      FROM mercados M
+      JOIN localidades L
+      ON M.id = L.mercado_id
+      ORDER BY M.nombre_mercado, L.nombre_local;
+    `
   );
   res.json(rows);
 };
 
-// consulta para mostrar todos los locales con su mercado
-Market.getAllLocalidadesAndMarkets = async (req, res) => {
+// get a markets by id whith localidades
+Market.getAllLocalidadesByMarketId = async (req, res) => {
   const conn = await connect();
-  const [rows] = await conn.query(
-    "SELECT localidades.id as localidad_id, localidades.nombre_local, mercados.id as mercado_id, mercados.nombre_mercado FROM localidades LEFT JOIN mercados ON localidades.id = mercados.localidad_id"
-  );
-  res.json(rows);
+  try {
+    // si el id no existe, mostrar un mensaje de no hay datos con ese id
+    const [rows] = await conn.query(
+      `
+      SELECT M.nombre_mercado, 
+          L.propietario,
+          L.DNI,
+          L.nombre_local, 
+          L.tipo_local, 
+          L.estado_local, 
+          L.telefono, 
+          L.direccion,
+          L.monto
+      FROM mercados M
+      JOIN localidades L
+      ON M.id = L.mercado_id
+      WHERE M.id = ?
+      ORDER BY L.nombre_local;
+    `,
+      [req.params.id]
+    );
+    if (rows.length === 0) {
+      res.json({ message: "El mercado no existe" });
+    } else {
+      res.json(rows);
+    }
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 };
 
 export default Market;
