@@ -71,97 +71,79 @@ VALUES (
         'Esteban', 'Martinez', '0801199502286', 'estebanmartinez@amdc.hn', '123456', '32485132', '011055', 2
     );
 
--- crear tabla de mercados, con un id, nombre del mercado, direccion, latitud y longitud de ubicacion
+-- crear tabla de mercados, con un id, nombre del mercado, direccion, latitud y longitud de ubicacion, Fecha de creacion automatica, Fecha de modificacion automatica
 CREATE TABLE IF NOT EXISTS mercados (
-    id INT AUTO_INCREMENT PRIMARY KEY, nombre_mercado VARCHAR(255) NOT NULL, direccion VARCHAR(255) NOT NULL, latitud DECIMAL(10, 8) NOT NULL, longitud DECIMAL(11, 8) NOT NULL
+    id INT AUTO_INCREMENT PRIMARY KEY, nombre_mercado VARCHAR(255) NOT NULL, direccion VARCHAR(255) NOT NULL, latitud DECIMAL(10, 8) NOT NULL, longitud DECIMAL(11, 8) NOT NULL, fecha_creacion DATE NOT NULL, fecha_modificacion DATE NOT NULL
 );
 
--- insertar unos 5 mercados de prueba, con nombre del mercado, direccion, latitud y longitud de ubicacion
+-- SELECT * FROM factamdcdb.mercados;
+
+-- ver los mercados y mostrar la fecha y hora de creacion
+SELECT nombre_mercado, fecha_creacion FROM mercados;
+
+-- insertar unos 5 mercados de prueba, con nombre del mercado, direccion, latitud y longitud de ubicacion, Fecha de creacion automatica, Fecha de modificacion automatica
 INSERT INTO
     mercados (
-        nombre_mercado, direccion, latitud, longitud
+        nombre_mercado, direccion, latitud, longitud, fecha_creacion, fecha_modificacion
     )
 VALUES (
-        'Mercado Kennedy', 'Col. Kennedy', 14.094, -87.206
+        'Mercado Kennedy', 'Col. Kennedy', 14.094, -87.206, '2021-10-01', '2021-10-01'
     );
 
 INSERT INTO
-    mercados (
-        nombre_mercado, direccion, latitud, longitud
-    )
+
+mercados (
+    nombre_mercado, direccion, latitud, longitud, fecha_creacion, fecha_modificacion
+)
 VALUES (
-        'Mercado La Isla', 'Col. La Isla', 14.095, -87.207
+        'Mercado La Isla', 'Col. La Isla', 14.094, -87.206, '2021-10-01', '2021-10-01'
     );
 
 INSERT INTO
-    mercados (
-        nombre_mercado, direccion, latitud, longitud
-    )
+
+mercados (
+    nombre_mercado, direccion, latitud, longitud, fecha_creacion, fecha_modificacion
+)
 VALUES (
-        'Mercado La Granja', 'Col. La Granja', 14.096, -87.208
+        'Mercado La Granja', 'Col. La Granja', 14.094, -87.206, '2021-10-01', '2021-10-01'
     );
 
 INSERT INTO
-    mercados (
-        nombre_mercado, direccion, latitud, longitud
-    )
+
+mercados (
+    nombre_mercado, direccion, latitud, longitud, fecha_creacion, fecha_modificacion
+)
+
 VALUES (
-        'Mercado San Isidro', 'Col. San Isidro', 14.097, -87.2069
+        'Mercado La Kennedy', 'Col. La Kennedy', 14.094, -87.206, '2021-10-01', '2021-10-01'
     );
 
 INSERT INTO
-    mercados (
-        nombre_mercado, direccion, latitud, longitud
-    )
+
+mercados (
+    nombre_mercado, direccion, latitud, longitud, fecha_creacion, fecha_modificacion
+)
+
 VALUES (
-        'Mercado La Hacienda', 'Col. La Hacienda', 14.098, -87.210
+        'Mercado La Hacienda', 'Col. La Hacienda', 14.094, -87.206, '2021-10-01', '2021-10-01'
     );
 
--- la tabla de localidades, con: id, propietario, DNI, numero de local, nombre de local, tipo de local, estado de local, latitud y longitud de ubicacion, telefono, direccion, monto, REFERENCES con la tabla de mercados
+-- la tabla de localidades, con: id, propietario, DNI, numero de local, nombre de local, tipo de local, estado de local, latitud y longitud de ubicacion, telefono, direccion, monto, fecha creacion, fecha_modificacion, de a REFERENCES con la tabla de mercados
 CREATE TABLE IF NOT EXISTS localidades (
-    id INT AUTO_INCREMENT PRIMARY KEY, propietario VARCHAR(255) NOT NULL, DNI VARCHAR(255) NOT NULL, numero_local INT NOT NULL, nombre_local VARCHAR(255) NOT NULL, tipo_local VARCHAR(255) NOT NULL, estado_local VARCHAR(255) NOT NULL, latitud DECIMAL(10, 8) NOT NULL, longitud DECIMAL(11, 8) NOT NULL, telefono VARCHAR(255) NOT NULL, direccion VARCHAR(255) NOT NULL, monto DECIMAL(10, 2) NOT NULL, mercado_id INT NOT NULL, FOREIGN KEY (mercado_id) REFERENCES mercados (id)
+    id INT AUTO_INCREMENT PRIMARY KEY, propietario VARCHAR(255) NOT NULL, DNI VARCHAR(255) NOT NULL, numero_local INT NOT NULL, nombre_local VARCHAR(255) NOT NULL, tipo_local VARCHAR(255) NOT NULL, estado_local VARCHAR(255) NOT NULL, latitud DECIMAL(10, 8) NOT NULL, longitud DECIMAL(11, 8) NOT NULL, telefono VARCHAR(255) NOT NULL, direccion VARCHAR(255) NOT NULL, monto DECIMAL(10, 2) NOT NULL, fecha_creacion DATE NOT NULL, fecha_modificacion DATE NOT NULL, mercado_id INT NOT NULL, FOREIGN KEY (mercado_id) REFERENCES mercados (id)
 );
 
--- insertar unas 5 localidades de prueba, con propietario, DNI, numero de local, nombre de local, tipo de local, estado de local, latitud y longitud de ubicacion, telefono, direccion, mercado_id, monto
+-- insertar unas 5 localidades de prueba, con propietario, DNI, numero de local, nombre de local, tipo de local, estado de local, latitud y longitud de ubicacion, telefono, direccion, monto, fecha creacion, fecha_modificacion, de a REFERENCES con la tabla de mercados
 INSERT INTO
     localidades (
-        propietario, DNI, numero_local, nombre_local, tipo_local, estado_local, latitud, longitud, telefono, direccion, monto, mercado_id
+        propietario, DNI, numero_local, nombre_local, tipo_local, estado_local, latitud, longitud, telefono, direccion, monto, fecha_creacion, fecha_modificacion, mercado_id
     )
+
 VALUES (
-        'Estefany Lagos', '0801199502281', 1, 'Local 1', 'Comida', 'Disponible', 14.094, -87.206, '97485132', 'Col. Kennedy', 100, 1
+        'Estefany Lagos', '0801199502281', 1, 'Local Kennedy', 'Comida', 'Disponible', 14.094, -87.206, '97485132', 'Col. Kennedy', 1000, '2021-10-01', '2021-10-01', 1
     );
 
 INSERT INTO
-    localidades (
-        propietario, DNI, numero_local, nombre_local, tipo_local, estado_local, latitud, longitud, telefono, direccion, monto, mercado_id
-    )
-VALUES (
-        'Mou Grind', '0801199502282', 2, 'Local 2', 'Comida', 'Disponible', 14.094, -87.206, '99485134', 'Col. Kennedy', 200, 1
-    );
-
-INSERT INTO
-    localidades (
-        propietario, DNI, numero_local, nombre_local, tipo_local, estado_local, latitud, longitud, telefono, direccion, monto, mercado_id
-    )
-VALUES (
-        'Jhon Smith', '0801199502283', 3, 'Local 3', 'Comida', 'Disponible', 14.094, -87.206, '97485135', 'Col. Kennedy', 300, 2
-    );
-
-INSERT INTO
-    localidades (
-        propietario, DNI, numero_local, nombre_local, tipo_local, estado_local, latitud, longitud, telefono, direccion, monto, mercado_id
-    )
-VALUES (
-        'Xiam Lee', '0801199502284', 4, 'Local 4', 'Comida', 'Disponible', 14.094, -87.206, '97485120', 'Col. Kennedy', 400, 3
-    );
-
-INSERT INTO
-    localidades (
-        propietario, DNI, numero_local, nombre_local, tipo_local, estado_local, latitud, longitud, telefono, direccion, monto, mercado_id
-    )
-VALUES (
-        'Maria Perez', '0801199502285', 5, 'Local 5', 'Comida', 'Disponible', 14.094, -87.206, '33485132', 'Col. Kennedy', 500, 4
-    );
 
 -- crear tabla de parqueos, con un id, nombre del parqueo, direccion, latitud y longitud de ubicacion, el pago por hora, capacidad de vehiculos, horario de atencion
 CREATE TABLE IF NOT EXISTS parqueos (
@@ -322,3 +304,9 @@ SELECT M.nombre_mercado, L.propietario, L.DNI, L.nombre_local, L.tipo_local, L.e
 FROM mercados M
     JOIN localidades L ON M.id = L.mercado_id
 ORDER BY M.nombre_mercado;
+
+-- mostrar el usuario y su rol
+SELECT U.nombre, U.apellido, U.correo, R.nombre as rol
+FROM usuarios U
+    JOIN roles R ON U.rol_id = R.id
+ORDER BY U.nombre;

@@ -66,6 +66,13 @@ Auth.login = async (req, res) => {
       correo,
     ]);
 
+    // obtener el rol del usuario
+    const rol = await db.query("SELECT * FROM roles WHERE id = ?", [
+      user[0][0].rol_id,
+    ]);
+    const rolFound = rol[0][0].nombre;
+    console.log("Rol:", rolFound);
+
     if (user.length > 0) {
       const userFound = user[0];
       console.log("Usuario Encontrado:", userFound[0]);
@@ -80,7 +87,12 @@ Auth.login = async (req, res) => {
         const token = jwt.sign({ id: userFound[0].id }, "secretkey", {
           expiresIn: "1h",
         }); // Cambia 'secretkey' por tu propia clave secreta y ajusta el tiempo de expiración según tus necesidades
-        res.json({ status: "ok", data: token, message: "Usuario autenticado" });
+        res.json({
+          status: "ok",
+          data: token,
+          message: "Usuario autenticado",
+          rol: rolFound,
+        });
       } else {
         res.status(401).json({ message: "Contraseña incorrecta" }); // Cambio de estado a 401 Unauthorized para contraseñas incorrectas
       }
@@ -161,7 +173,10 @@ Auth.getUserByToken = async (req, res) => {
   const user = await db.query("SELECT * FROM usuarios WHERE id = ?", [
     decoded.id,
   ]);
-  res.json(user[0]);
+  res.json({
+    status: "ok",
+    data: user[0],
+  });
 };
 
 export default Auth;

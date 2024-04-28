@@ -90,7 +90,7 @@ router.get("/markets", Market.getAllMarkets);
  *      tags: [Markets]
  */
 
-router.get("/markets/:id", Market.getMarketById);
+router.get("/market/:id", Market.getMarketById);
 
 /**
  * @swagger

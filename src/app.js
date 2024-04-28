@@ -15,7 +15,7 @@ import Auth from "./routes/Auth/Auth.routes.js";
 const app = expresss();
 
 // Settings
-app.set("port", process.env.PORT || 3000);
+app.set("port", process.env.PORT || 3001);
 
 // middlewares
 app.use(bodyParser.json());
