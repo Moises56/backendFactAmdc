@@ -237,15 +237,17 @@ Market.getAllLocalidadesByMarketId = async (req, res) => {
     // si el id no existe, mostrar un mensaje de no hay datos con ese id
     const [rows] = await conn.query(
       `
-      SELECT M.nombre_mercado, 
+      SELECT L.id, M.nombre_mercado, 
           L.propietario,
           L.DNI,
+          L.numero_local,
           L.nombre_local, 
           L.tipo_local, 
           L.estado_local, 
           L.telefono, 
           L.direccion,
-          L.monto
+          L.monto,
+          L.fecha_creacion
       FROM mercados M
       JOIN localidades L
       ON M.id = L.mercado_id
