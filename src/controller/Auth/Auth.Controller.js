@@ -6,7 +6,7 @@ import { promisify } from "util";
 import { connect } from "../../db.js";
 import { stat } from "fs";
 
-// registrar user con jwt y bcrypt usando try catch y promisify bcrypt hash y compare para encriptar en la base de datos los campos son: nombre , apellido,  dni, correo, contrasena, telefono, rol_id
+//* registrar user con jwt y bcrypt usando try catch y promisify bcrypt hash y compare para encriptar en la base de datos los campos son: nombre , apellido,  dni, correo, contrasena, telefono, rol_id
 Auth.register = async (req, res) => {
   const {
     nombre,
@@ -57,7 +57,7 @@ Auth.register = async (req, res) => {
   }
 };
 
-// login user con jwt y bcrypt usando try catch y promisify bcrypt hash y compare para encriptar en la base de datos los campos son: correo, contrasena
+//* login user con jwt y bcrypt usando try catch y promisify bcrypt hash y compare para encriptar en la base de datos los campos son: correo, contrasena
 Auth.login = async (req, res) => {
   const { correo, contrasena } = req.body;
   const db = await connect();
@@ -66,7 +66,7 @@ Auth.login = async (req, res) => {
       correo,
     ]);
 
-    // obtener el rol del usuario
+    //* obtener el rol del usuario
     const rol = await db.query("SELECT * FROM roles WHERE id = ?", [
       user[0][0].rol_id,
     ]);
@@ -90,6 +90,7 @@ Auth.login = async (req, res) => {
         res.json({
           status: "ok",
           data: token,
+          user: userFound[0].nombre + " " + userFound[0].apellido,
           message: "Usuario autenticado",
           rol: rolFound,
         });
@@ -104,14 +105,14 @@ Auth.login = async (req, res) => {
   }
 };
 
-// obtener todos los usuarios
+//* obtener todos los usuarios
 Auth.getAllUsers = async (req, res) => {
   const db = await connect();
   const users = await db.query("SELECT * FROM usuarios");
   res.json(users[0]);
 };
 
-// obtener usuario por id
+//* obtener usuario por id
 Auth.getUserById = async (req, res) => {
   const db = await connect();
   const { id } = req.params;
