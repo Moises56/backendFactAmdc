@@ -58,47 +58,109 @@ Auth.register = async (req, res) => {
 };
 
 //* login user con jwt y bcrypt usando try catch y promisify bcrypt hash y compare para encriptar en la base de datos los campos son: correo, contrasena
+// Auth.login = async (req, res) => {
+//   const { correo, contrasena } = req.body;
+//   const db = await connect();
+//   try {
+//     const user = await db.query("SELECT * FROM usuarios WHERE correo = ?", [
+//       correo,
+//     ]);
+
+//     //* obtener el rol del usuario
+//     const rol = await db.query("SELECT * FROM roles WHERE id = ?", [
+//       user[0][0].rol_id,
+//     ]);
+//     const rolFound = rol[0][0].nombre;
+//     console.log("Rol:", rolFound);
+
+//     if (user.length > 0) {
+//       const userFound = user[0];
+//       console.log("Usuario Encontrado:", userFound[0]);
+//       console.log("Contraseña Almacenada:", userFound[0].contrasena);
+//       const validPassword = await promisify(bcrypt.compare)(
+//         contrasena,
+//         userFound[0].contrasena
+//       );
+//       console.log("Valid Password:", validPassword);
+
+//       if (validPassword) {
+//         const token = jwt.sign({ id: userFound[0].id }, "secretkey", {
+//           expiresIn: "1h",
+//         }); // Cambia 'secretkey' por tu propia clave secreta y ajusta el tiempo de expiración según tus necesidades
+//         res.json({
+//           status: "ok",
+//           data: token,
+//           user: userFound[0].nombre + " " + userFound[0].apellido,
+//           message: "Usuario autenticado",
+//           rol: rolFound,
+//         });
+//       } else {
+//         res.status(401).json({ message: "Contraseña incorrecta" }); // Cambio de estado a 401 Unauthorized para contraseñas incorrectas
+//       }
+//     } else {
+//       res.status(404).json({ message: "Usuario no encontrado" }); // Cambio de estado a 404 Not Found para usuarios no encontrados
+//     }
+//   } catch (error) {
+//     res.status(500).json({ message: error.message }); // Cambio de estado a 500 Internal Server Error para errores internos del servidor
+//   }
+// };
+
 Auth.login = async (req, res) => {
   const { correo, contrasena } = req.body;
   const db = await connect();
   try {
-    const user = await db.query("SELECT * FROM usuarios WHERE correo = ?", [
-      correo,
+    const [userResult] = await db.query(
+      "SELECT * FROM usuarios WHERE correo = ?",
+      [correo]
+    );
+
+    if (userResult.length === 0) {
+      console.log("Correo no válido");
+      return res.status(401).json({
+        message: "Correo no válido",
+        status: "error",
+        data: null,
+        user: null,
+        rol: null,
+      }); // Mensaje para correo no válido
+    }
+
+    const user = userResult[0];
+
+    const [rolResult] = await db.query("SELECT * FROM roles WHERE id = ?", [
+      user.rol_id,
     ]);
+    const rolFound = rolResult.length > 0 ? rolResult[0].nombre : null;
 
-    //* obtener el rol del usuario
-    const rol = await db.query("SELECT * FROM roles WHERE id = ?", [
-      user[0][0].rol_id,
-    ]);
-    const rolFound = rol[0][0].nombre;
-    console.log("Rol:", rolFound);
+    // console.log("Rol:", rolFound);
+    // console.log("Usuario Encontrado:", user);
+    // console.log("Contraseña Almacenada:", user.contrasena);
 
-    if (user.length > 0) {
-      const userFound = user[0];
-      console.log("Usuario Encontrado:", userFound[0]);
-      console.log("Contraseña Almacenada:", userFound[0].contrasena);
-      const validPassword = await promisify(bcrypt.compare)(
-        contrasena,
-        userFound[0].contrasena
-      );
-      console.log("Valid Password:", validPassword);
+    const validPassword = await promisify(bcrypt.compare)(
+      contrasena,
+      user.contrasena
+    );
+    console.log("Valid Password:", validPassword);
 
-      if (validPassword) {
-        const token = jwt.sign({ id: userFound[0].id }, "secretkey", {
-          expiresIn: "1h",
-        }); // Cambia 'secretkey' por tu propia clave secreta y ajusta el tiempo de expiración según tus necesidades
-        res.json({
-          status: "ok",
-          data: token,
-          user: userFound[0].nombre + " " + userFound[0].apellido,
-          message: "Usuario autenticado",
-          rol: rolFound,
-        });
-      } else {
-        res.status(401).json({ message: "Contraseña incorrecta" }); // Cambio de estado a 401 Unauthorized para contraseñas incorrectas
-      }
+    if (validPassword) {
+      const token = jwt.sign({ id: user.id }, "secretkey", {
+        expiresIn: "1h",
+      }); // Cambia 'secretkey' por tu propia clave secreta y ajusta el tiempo de expiración según tus necesidades
+      res.json({
+        status: "ok",
+        data: token,
+        user: user.nombre + " " + user.apellido,
+        message: "Usuario autenticado",
+        rol: rolFound,
+      });
     } else {
-      res.status(404).json({ message: "Usuario no encontrado" }); // Cambio de estado a 404 Not Found para usuarios no encontrados
+      res.status(401).json({
+        message: "Contraseña incorrecta",
+        status: "error",
+        data: null,
+        user: null,
+        rol: null,
+      }); // Cambio de estado a 401 Unauthorized para contraseñas incorrectas
     }
   } catch (error) {
     res.status(500).json({ message: error.message }); // Cambio de estado a 500 Internal Server Error para errores internos del servidor
