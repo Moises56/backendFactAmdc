@@ -6,8 +6,8 @@ import { connect } from "../../db.js";
 
 // Get all localidades
 Market.getAllLocalidades = async (req, res) => {
+  const conn = await connect();
   try {
-    const conn = await connect();
     const [rows] = await conn.query("SELECT * FROM localidades");
     res.json({
       data: rows,
@@ -34,7 +34,7 @@ Market.createLocalidades = async (req, res) => {
   const conn = await connect();
   try {
     const [result] = await conn.query(
-      "INSERT INTO localidades (propietario,DNI,numero_local,nombre_local,tipo_local,estado_local,latitud,longitud,telefono,direccion,monto,fecha_creacion,fecha_modificacion,mercado_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(),NOW(), ?)",
+      "INSERT INTO localidades (propietario,DNI,numero_local,nombre_local,tipo_local,estado_local,latitud,longitud,telefono,direccion,monto,fecha_creacion,fecha_modificacion,permiso_operacion,mercado_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(),NOW(), ?)",
       [
         req.body.propietario,
         req.body.DNI,
@@ -47,6 +47,7 @@ Market.createLocalidades = async (req, res) => {
         req.body.telefono,
         req.body.direccion,
         req.body.monto,
+        req.body.permiso_operacion,
         req.body.mercado_id,
       ]
     );
@@ -66,7 +67,7 @@ Market.updateLocalidades = async (req, res) => {
   const conn = await connect();
   try {
     await conn.query(
-      "UPDATE localidades SET propietario = ?, DNI = ?, numero_local = ?, nombre_local = ?, tipo_local = ?, estado_local = ?, latitud = ?, longitud = ?, telefono = ?, direccion = ?, monto = ?, mercado_id = ? WHERE id = ?",
+      "UPDATE localidades SET propietario = ?, DNI = ?, numero_local = ?, nombre_local = ?, tipo_local = ?, estado_local = ?, latitud = ?, longitud = ?, telefono = ?, direccion = ?, monto = ?, permiso_operacion=?, mercado_id = ? WHERE id = ?",
       [
         req.body.propietario,
         req.body.DNI,
@@ -79,6 +80,7 @@ Market.updateLocalidades = async (req, res) => {
         req.body.telefono,
         req.body.direccion,
         req.body.monto,
+        req.body.permiso_operacion,
         req.body.mercado_id,
         req.params.id,
       ]
@@ -247,7 +249,8 @@ Market.getAllLocalidadesByMarketId = async (req, res) => {
           L.telefono, 
           L.direccion,
           L.monto,
-          L.fecha_creacion
+          L.fecha_creacion,
+          L.permiso_operacion
       FROM mercados M
       JOIN localidades L
       ON M.id = L.mercado_id

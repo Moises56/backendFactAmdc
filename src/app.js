@@ -11,6 +11,8 @@ const specs = swaggerJSDoc(options);
 
 import Market from "./routes/Market/Mercado.routes.js";
 import Auth from "./routes/Auth/Auth.routes.js";
+import Email from "./routes/Auth/Email.routes.js";
+import Invoice from "./routes/Factura/Fact.routes.js";
 
 const app = expresss();
 
@@ -25,6 +27,8 @@ app.use(morgan("dev"));
 
 app.use("/api", Market);
 app.use("/auth", Auth);
+app.use("/email", Email);
+app.use("/invoice", Invoice);
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 export default app;
